@@ -1,5 +1,0 @@
-package com.example.email.confirg;
-
-public class RabbitMQConfig {
-
-}

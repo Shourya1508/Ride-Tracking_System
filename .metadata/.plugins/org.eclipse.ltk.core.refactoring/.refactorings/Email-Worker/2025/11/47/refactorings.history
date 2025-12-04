@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename package &apos;com.example.email.Model&apos; to &apos;com.example.event.model&apos;&#x0D;&#x0A;- Original project: &apos;Email-Worker&apos;&#x0D;&#x0A;- Original element: &apos;Email-Worker/src/main/java/com.example.email.Model&apos;&#x0D;&#x0A;- Renamed element: &apos;Email-Worker/src/main/java/com.example.event.model&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename package &apos;com.example.email.Model&apos;" flags="589830" hierarchical="false" id="org.eclipse.jdt.ui.rename.package" input="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.example.email.Model" name="com.example.event.model" qualified="false" references="true" stamp="1763608949135" textual="false" version="1.0"/>
-</session>

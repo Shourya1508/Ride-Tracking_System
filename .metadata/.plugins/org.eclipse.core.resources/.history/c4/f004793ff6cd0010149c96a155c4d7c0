@@ -1,5 +1,0 @@
-package com.example.driver.Config;
-
-public class FeignSSLIgnoreConfig {
-
-}

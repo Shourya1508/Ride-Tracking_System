@@ -1,7 +1,0 @@
-INDEX VERSION 1.134
-C:\Users\Asus\eclipse-workspace\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\4013271507.index
-\FrontEnd\src\main\java
-C:\Users\Asus\eclipse-workspace\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\3757006701.index
-\Login\src\main\java
-C:\Users\Asus\eclipse-workspace\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2174678610.index
-\EmployeeLoginPage\src\main\java
