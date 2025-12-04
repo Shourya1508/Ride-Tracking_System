@@ -1,0 +1,5 @@
+package com.example.notification.Emailconfig;
+
+public class EmailConfig {
+
+}

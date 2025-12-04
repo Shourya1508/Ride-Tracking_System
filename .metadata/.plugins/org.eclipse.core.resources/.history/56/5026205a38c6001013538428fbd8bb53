@@ -1,0 +1,5 @@
+package com.example.notification.Service;
+
+public class EmailService {
+
+}

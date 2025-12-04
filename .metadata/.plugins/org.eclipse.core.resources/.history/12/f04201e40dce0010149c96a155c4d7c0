@@ -1,0 +1,44 @@
+package com.example.driver.Entity;
+
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ORSRouteResponse {
+    private List<Route> routes;
+
+    public List<Route> getRoutes() {
+        return routes;
+    }
+
+    public void setRoutes(List<Route> routes) {
+        this.routes = routes;
+    }
+
+    public static class Route {
+        private Geometry geometry;
+
+        public Geometry getGeometry() {
+            return geometry;
+        }
+
+        public void setGeometry(Geometry geometry) {
+            this.geometry = geometry;
+        }
+    }
+
+    public static class Geometry {
+        private List<List<Double>> coordinates;
+
+        public List<List<Double>> getCoordinates() {
+            return coordinates;
+        }
+
+        public void setCoordinates(List<List<Double>> coordinates) {
+            this.coordinates = coordinates;
+        }
+    }
+}
+
+

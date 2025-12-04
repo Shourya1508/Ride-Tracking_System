@@ -1,0 +1,28 @@
+package com.example.notification.Listener;
+
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.notification.Service.EmailService;
+
+@Service
+public class NotificationListener {
+
+    @Autowired
+    private EmailService emailService;
+
+    @RabbitListener(queues = "notification.queue")
+    public void handleNotification(String message) {
+
+        System.out.println("📩 Notification Received: " + message);
+
+        // Example email parsing (simple)
+        String[] parts = message.split(";");
+        String email = parts[0].split("=")[1];
+        String body  = parts[1].split("=")[1];
+
+        emailService.sendEmail(email, "Ride Notification", body);
+    }
+}
+

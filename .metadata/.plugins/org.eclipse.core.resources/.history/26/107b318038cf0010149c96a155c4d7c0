@@ -1,0 +1,30 @@
+# ---------------------------------
+# Service Identity
+# ---------------------------------
+spring.application.name=Notification-Service
+server.port=8084
+
+# ---------------------------------
+# RabbitMQ Configuration (Docker)
+# ---------------------------------
+spring.rabbitmq.host=rabbitmq
+spring.rabbitmq.port=5672
+spring.rabbitmq.username=guest
+spring.rabbitmq.password=guest
+
+# ---------------------------------
+# Email Configuration (optional)
+# ---------------------------------
+spring.mail.default-encoding=UTF-8
+
+# ---------------------------------
+# RabbitMQ Listener Settings
+# ---------------------------------
+spring.rabbitmq.listener.simple.missing-queues-fatal=false
+spring.rabbitmq.listener.direct.missing-queues-fatal=false
+spring.rabbitmq.listener.simple.auto-startup=true
+
+twilio.accountSid=USbea5e4a89050022002f322edf9a29e27
+twilio.authToken=YOUR_TWILIO_AUTH_TOKEN
+twilio.phoneNumber=YOUR_TWILIO_PHONE_NUMBER
+

@@ -1,0 +1,63 @@
+package practice;
+import java.lang.management.*;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
+
+
+class A {
+    synchronized void methodA(B b) {
+        System.out.println(Thread.currentThread().getName() + " is in methodA");
+        try { Thread.sleep(100); } catch (InterruptedException e) {}
+        System.out.println("Waiting to aquire lock on B");
+        b.last(); // waits for lock on B
+    }
+
+    synchronized void last() {
+        System.out.println("Inside A.last()");
+    }
+}
+
+class B {
+    synchronized void methodB(A a) {
+        System.out.println(Thread.currentThread().getName() + " is in methodB");
+        try { Thread.sleep(100); } catch (InterruptedException e) {}
+        System.out.println("Waiting to aquire lock on A");
+        a.last(); // waits for lock on A
+    }
+
+    synchronized void last() {
+        System.out.println("Inside B.last()");
+    }
+}
+
+public class DeadlockExample {
+    public static void main(String[] args) {
+        A a = new A();
+        B b = new B();
+
+        Thread t1 = new Thread(() -> a.methodA(b), "Thread-1");
+        Thread t2 = new Thread(() -> b.methodB(a), "Thread-2");
+
+        t1.start();
+        t2.start();
+    	Semaphore semaphore = new Semaphore(3);
+
+    }} 
+//     Code below for deadlock detection. but not supporting here since we r using jre 17 or above   
+        
+//        ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+//        long[] threadIds = bean.findDeadlockedThreads();
+//
+//        if (threadIds != null) {
+//            ThreadInfo[] infos = bean.getThreadInfo(threadIds);
+//            System.out.println("\n⚠️ Deadlock detected!");
+//            for (ThreadInfo info : infos) {
+//                System.out.println("Thread involved: " + info.getThreadName());
+//            }
+//        } else {
+//            System.out.println("\n✅ No Deadlock detected.");
+//        }
+//    }
+//    }
+//}
+

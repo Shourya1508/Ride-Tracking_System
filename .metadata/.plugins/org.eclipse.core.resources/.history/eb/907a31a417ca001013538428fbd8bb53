@@ -1,0 +1,94 @@
+package com.example.driver.Config;
+
+import feign.Client;
+import feign.httpclient.ApacheHttpClient;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+
+import javax.net.ssl.SSLContext;
+import java.io.InputStream;
+
+@Configuration
+public class FeignSslConfig {
+
+    @Bean
+    public Client feignClient() throws Exception {
+        // Load keystore and truststore from classpath
+        try (InputStream keyStoreInput = new ClassPathResource("certificates/driver-service.jks").getInputStream();
+             InputStream trustStoreInput = new ClassPathResource("certificates/driver-service-truststore.jks").getInputStream()) {
+
+            SSLContext sslContext = SSLContextBuilder.create()
+                    .loadKeyMaterial(keyStoreInput, "changeit".toCharArray(), "changeit".toCharArray())
+                    .loadTrustMaterial(trustStoreInput, "changeit".toCharArray())
+                    .build();
+
+            SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
+
+            CloseableHttpClient httpClient = HttpClients.custom()
+                    .setSSLSocketFactory(csf)
+                    .build();
+
+            return new ApacheHttpClient(httpClient);
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//package com.example.driver.Config;
+//
+//import feign.Client;
+//import feign.httpclient.ApacheHttpClient;
+//import org.apache.http.conn.ssl.NoopHostnameVerifier;
+//import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+//import org.apache.http.impl.client.CloseableHttpClient;
+//import org.apache.http.impl.client.HttpClients;
+//import org.apache.http.ssl.SSLContextBuilder;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//
+//import javax.net.ssl.SSLContext;
+//import java.io.File;
+//
+//@Configuration
+//public class FeignSslConfig {
+//
+//    @Bean
+//    public Client feignClient() throws Exception {
+//        SSLContext sslContext = SSLContextBuilder.create()
+//                .loadKeyMaterial(
+//                        new File("src/main/resources/certificates/driver-service.jks"),
+//                        "changeit".toCharArray(),
+//                        "changeit".toCharArray())
+//                .loadTrustMaterial(
+//                        new File("src/main/resources/certificates/driver-service-truststore.jks"),
+//                        "changeit".toCharArray())
+//                .build();
+//
+//        SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
+//
+//        CloseableHttpClient httpClient = HttpClients.custom()
+//                .setSSLSocketFactory(csf)
+//                .build();
+//
+//        return new ApacheHttpClient(httpClient);
+//    }
+//}

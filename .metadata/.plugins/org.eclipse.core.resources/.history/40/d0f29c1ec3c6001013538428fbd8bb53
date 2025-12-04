@@ -1,0 +1,38 @@
+package com.example.driver.Config;
+
+import feign.Client;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import javax.net.ssl.SSLContext;
+import java.io.File;
+
+@Configuration
+public class FeignSslConfig {
+
+    @Bean
+    public Client feignClient() throws Exception {
+
+        char[] keyStorePassword = "changeit".toCharArray();
+
+        // SSL context with keystore (client cert) and truststore (CA)
+        SSLContext sslContext = SSLContextBuilder.create()
+                .loadKeyMaterial(new File("src/main/resources/certificates/driver-service.jks"), keyStorePassword, keyStorePassword)
+                .loadTrustMaterial(new File("src/main/resources/certificates/driver-service-truststore.jks"), keyStorePassword)
+                .build();
+
+        SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, new NoopHostnameVerifier());
+
+        // Apache HttpClient 4.x instance
+        org.apache.http.client.HttpClient httpClient = HttpClients.custom()
+                .setSSLSocketFactory(csf)
+                .build();
+
+        // Feign client using HttpClient 4.x
+        return new Client.Default(httpClient, null);
+    }
+}

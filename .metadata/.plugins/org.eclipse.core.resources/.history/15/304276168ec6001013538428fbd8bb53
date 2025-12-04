@@ -1,0 +1,28 @@
+package com.example.ride.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.ride.Service.DriverTrackingService;
+
+@RestController
+@RequestMapping("/rides")
+public class DriverLocationController {
+
+    @Autowired
+    private DriverTrackingService  trackingService;
+
+    @PostMapping("/driver/{driverId}/location")
+    public void updateLocation(
+            @PathVariable Long driverId,
+            @RequestParam Double lat,
+            @RequestParam Double lon) {
+
+        trackingService.updateLocation(driverId, lat, lon);
+    }
+}
+

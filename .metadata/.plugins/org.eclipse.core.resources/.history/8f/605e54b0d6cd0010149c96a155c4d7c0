@@ -1,0 +1,106 @@
+package com.example.ride.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.ride.Entity.DriverRideRequest;
+import com.example.ride.Entity.ORSGeocodeResponse;
+import com.example.ride.Entity.Ride;
+import com.example.ride.GeoCode.ORSGeocodeClient;
+import com.example.ride.Kafkaconsumer.RideEventPublisher;
+import com.example.ride.RabbitmqPublisher.NotificationPublisher;
+import com.example.ride.Repository.RideRepository;
+import com.example.ride.Service.DriverTrackingService;
+import com.example.ride.Service.UserServiceClient;
+
+@RestController
+@RequestMapping("/rides")
+public class DriverLocationController {
+
+    @Autowired
+    private DriverTrackingService  trackingService;
+    @Autowired
+    private RideRepository rideRepository;
+    
+    @Autowired
+    private NotificationPublisher notificationPublisher;
+    
+    @Autowired
+    private UserServiceClient userServiceClient;
+    
+    @Autowired
+    private ORSGeocodeClient geocodeClient;
+    
+    @Autowired
+    private RideEventPublisher rideEventPublisher ;
+    
+    @Value("${ors.api.key}")
+    private String orsApiKey;
+    
+//    
+    
+    
+
+    @PostMapping
+    public Ride createRide(@RequestBody Ride rideRequest) {
+
+        // STEP 1: Save ride as REQUESTED
+        rideRequest.setStatus("REQUESTED");
+        Ride savedRide = rideRepository.save(rideRequest);
+
+        // STEP 2: Notify user (existing)
+        UserServiceClient.UserResponse user = userServiceClient.getUserById(savedRide.getUserId());
+        String email = user.getEmail();
+        notificationPublisher.sendRideNotification(email, "Your ride has been requested!");
+
+        // STEP 3: Convert pickup & drop names to coordinates
+        ORSGeocodeResponse pickRes = geocodeClient.search(orsApiKey, savedRide.getPickupLocation(), 1);
+        ORSGeocodeResponse.Feature pickFeat = pickRes.getFeatures().get(0);
+        double pickupLon = pickFeat.getGeometry().getCoordinates().get(0);
+        double pickupLat = pickFeat.getGeometry().getCoordinates().get(1);
+        System.out.println("pickup Lon:"+pickupLon+" pickupLat: "+pickupLat);
+
+        ORSGeocodeResponse dropRes = geocodeClient.search(orsApiKey, savedRide.getDropLocation(), 1);
+        ORSGeocodeResponse.Feature dropFeat = dropRes.getFeatures().get(0);
+        double dropLon = dropFeat.getGeometry().getCoordinates().get(0);
+        double dropLat = dropFeat.getGeometry().getCoordinates().get(1);
+        System.out.println(" dropLon:"+dropLon+" dropLat: "+dropLat);
+
+        // STEP 4: Assign driver — simple static logic for now
+        Long assignedDriverId = rideRequest.getDriverId();  // choose logic later
+
+        // STEP 5: Build Kafka event for driver service
+        DriverRideRequest event = new DriverRideRequest();
+        event.setRideId(savedRide.getId());
+        event.setDriverId(assignedDriverId);
+        event.setPickupLat(pickupLat);
+        event.setPickupLon(pickupLon);
+        event.setDropLat(dropLat);
+        event.setDropLon(dropLon);
+
+        // STEP 6: Publish event to topic 'ride-created'
+        rideEventPublisher.publish(event);
+
+        return savedRide;
+    }
+
+    
+
+
+
+    @PostMapping("/driver/{driverId}/location")
+    public void updateLocation(
+            @PathVariable Long driverId,
+            @RequestParam Double lat,
+            @RequestParam Double lon) {
+
+        trackingService.updateLocation(driverId, lat, lon);
+    }
+}
+

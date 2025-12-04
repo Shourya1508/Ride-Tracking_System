@@ -1,0 +1,22 @@
+package com.example.driver.Entity;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import com.example.driver.Service.DriverService;
+
+@Component
+public class LocationScheduler {
+
+    @Autowired
+    
+    private DriverService driverService;
+
+    private Long simulatedDriverId = 1L; // whichever driver you simulate
+
+    @Scheduled(fixedRate = 15000)
+    public void updateDriverLocation() {
+        driverService.simulateMovement(simulatedDriverId);
+    }
+}

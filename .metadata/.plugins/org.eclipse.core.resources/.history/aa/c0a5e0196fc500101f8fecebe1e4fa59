@@ -1,0 +1,5 @@
+package com.example.rule.Service;
+
+public class KafkaConsumerService {
+
+}

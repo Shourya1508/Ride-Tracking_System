@@ -1,0 +1,5 @@
+package com.example.driver.KafkaEventPublisher;
+
+public class RideCreatedConsumer {
+
+}

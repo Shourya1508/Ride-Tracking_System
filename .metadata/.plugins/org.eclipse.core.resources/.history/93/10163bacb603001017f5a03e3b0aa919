@@ -1,0 +1,13 @@
+spring.application.name=KYC
+spring.datasource.url=jdbc:mysql://localhost:3306/kyc_db?useSSL=false
+spring.datasource.username=root
+spring.datasource.password=root@123
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.format_sql=true
+file.upload-dir=uploads/
+# Set max file size (5MB per file)
+spring.servlet.multipart.max-file-size=900KB
+
+# Set max request size (20MB total request)
+spring.servlet.multipart.max-request-size=10MB

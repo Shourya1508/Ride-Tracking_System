@@ -1,0 +1,17 @@
+package com.example.driver.Entity;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class LocationScheduler {
+
+    @Autowired
+    private DriverService driverService;
+
+    private Long simulatedDriverId = 1L; // whichever driver you simulate
+
+    @Scheduled(fixedRate = 15000)
+    public void updateDriverLocation() {
+        driverService.simulateMovement(simulatedDriverId);
+    }
+}

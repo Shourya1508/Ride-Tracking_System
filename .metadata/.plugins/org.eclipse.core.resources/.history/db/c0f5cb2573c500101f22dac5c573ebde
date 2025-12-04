@@ -1,0 +1,5 @@
+package com.example.email.Service;
+
+public class EmailConsumer {
+
+}

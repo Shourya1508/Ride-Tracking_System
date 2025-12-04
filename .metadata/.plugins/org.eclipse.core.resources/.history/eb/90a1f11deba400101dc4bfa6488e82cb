@@ -1,0 +1,83 @@
+package com.web.KYC.Controller;
+
+import com.web.KYC.Entity.UserModel;
+import com.web.KYC.Entity.UserRegistrationRequest;
+import com.web.KYC.Repository.UserRepository;
+import com.web.KYC.Service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/users")
+@CrossOrigin(origins = "http://localhost:3000")
+public class UserController {
+
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+    
+    @Autowired
+    UserRepository userRepository;
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest userRequest) {
+        try {
+            if (userRepository.findByEmail(userRequest.getEmail()).isPresent()) {
+                return ResponseEntity.badRequest().body("Email already registered!");
+            }
+            UserModel registeredUser = userService.registerUser(userRequest);
+            registeredUser.setEmailVerified(false);
+            userRepository.save(registeredUser);
+
+            userService.sendOtpToUser(registeredUser);
+            return new ResponseEntity<>("OTP sent to email.Otp valid for next 5 mins",HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("User registration failed: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyOtp(@RequestParam String email, @RequestParam String otp) {
+        boolean verified = userService.verifyOtp(email, otp);
+        if (verified) {
+            return ResponseEntity.ok("Email verified successfully!");
+        } else {
+            return ResponseEntity.badRequest().body("Invalid or expired OTP.");
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserModel> getUserById(@PathVariable Long id) {
+        return userService.findUserById(id)
+                .map(user -> ResponseEntity.ok(user))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserModel> updateUser(@PathVariable Long id, @RequestBody UserModel updatedUser) {
+        return userService.updateUser(id, updatedUser)
+                .map(user -> ResponseEntity.ok(user))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/all")
+    public List<UserModel> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        if (userService.deleteUser(id)) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}

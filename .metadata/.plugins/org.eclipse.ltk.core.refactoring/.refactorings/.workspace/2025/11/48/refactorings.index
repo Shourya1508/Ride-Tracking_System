@@ -1,0 +1,5 @@
+1764052821145	Delete resource 'Ride-Service/src/main/resources/certificates/ride-service-truststore.jks'
+1764052828099	Delete resource 'Driver-Service/src/main/resources/certificates/driver-service.jks'
+1764052830329	Delete resource 'Driver-Service/src/main/resources/certificates/driver-service-truststore.jks'
+1764052841273	Delete resource 'User-Service/src/main/resources/certificates/user-service.jks'
+1764052844192	Delete resource 'User-Service/src/main/resources/certificates/user-service-truststore.jks'

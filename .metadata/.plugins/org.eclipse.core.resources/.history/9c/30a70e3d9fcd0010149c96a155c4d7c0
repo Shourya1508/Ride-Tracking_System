@@ -1,0 +1,5 @@
+package com.example.ride.Entity;
+
+public class DriverRideRequest {
+
+}

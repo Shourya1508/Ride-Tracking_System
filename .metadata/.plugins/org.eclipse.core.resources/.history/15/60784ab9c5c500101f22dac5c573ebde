@@ -1,0 +1,5 @@
+package com.example.rule.Config;
+
+public class RabbitMQConfig {
+
+}

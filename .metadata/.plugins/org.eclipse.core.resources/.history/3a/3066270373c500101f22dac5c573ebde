@@ -1,0 +1,5 @@
+package com.example.email.Model;
+
+public class UserEvent {
+
+}

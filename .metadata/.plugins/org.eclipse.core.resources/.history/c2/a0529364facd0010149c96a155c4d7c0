@@ -1,0 +1,24 @@
+package com.example.driver.ORSClient;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.example.driver.Config.InternalFeignSslConfig;
+import com.example.driver.Entity.ORSRouteResponse;
+
+@FeignClient(
+	    name = "ors-client",
+	    url = "https://api.openrouteservice.org",
+	    configuration = InternalFeignSslConfig.class // ORS uses https – no need for MTLS
+	)
+	public interface OpenRouteServiceClient {
+
+	    @GetMapping("/v2/directions/driving-car")
+	    ORSRouteResponse getRoute(
+	        @RequestParam("api_key") String apiKey,
+	        @RequestParam("start") String start,
+	        @RequestParam("end") String end
+	    );
+	}
+
